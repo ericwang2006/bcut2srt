@@ -6,7 +6,7 @@
 
 直接使用Delphi打开工程文件bcut2srt.dpr编译，D6以上的所有版本都支持。
 
-## 使用方法
+## 使用方法(二选一)
 
 - 点击"打开必剪工程文件"按钮，选择必剪工程文件(`project.xml`)，必剪工程文件默认位于`%USERPROFILE%\Documents\MYVideoProject`下面的子文件夹
 - 直接将必剪工程文件拖放到程序窗口
