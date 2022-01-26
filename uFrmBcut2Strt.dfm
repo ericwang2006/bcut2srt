@@ -3,7 +3,7 @@ object FrmBcut2Strt: TFrmBcut2Strt
   Top = 255
   Width = 706
   Height = 510
-  Caption = #24517#21098#36716'srt'
+  Caption = #24517#21098#23383#24149#23548#20986#24037#20855
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText

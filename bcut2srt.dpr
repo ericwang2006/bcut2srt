@@ -8,7 +8,7 @@ uses
 
 begin
   Application.Initialize;
-  Application.Title := '必剪转SRT';
+  Application.Title := '必剪字幕导出工具';
   Application.CreateForm(TFrmBcut2Strt, FrmBcut2Strt);
   Application.Run;
 end.
