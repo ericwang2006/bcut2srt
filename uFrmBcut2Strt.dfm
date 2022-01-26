@@ -22,8 +22,15 @@ object FrmBcut2Strt: TFrmBcut2Strt
     Height = 427
     Align = alClient
     BorderStyle = bsNone
+    Font.Charset = GB2312_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Fixedsys'
+    Font.Style = []
     Lines.Strings = (
-      #21487#30452#25509#25226#24517#21098#24037#31243#25991#20214#25302#25918#21040#27492#31383#21475)
+      #21487#30452#25509#25226#24517#21098#24037#31243#25991#20214#25302#25918#21040#27492#31383#21475
+      'Drop file here')
+    ParentFont = False
     ReadOnly = True
     ScrollBars = ssBoth
     TabOrder = 0
@@ -39,25 +46,34 @@ object FrmBcut2Strt: TFrmBcut2Strt
     DesignSize = (
       698
       52)
-    object Button1: TButton
+    object btnOpen: TButton
       Left = 480
-      Top = 11
+      Top = 8
       Width = 115
       Height = 25
       Anchors = [akRight, akBottom]
       Caption = #25171#24320#24517#21098#24037#31243#25991#20214
       TabOrder = 0
-      OnClick = Button1Click
+      OnClick = btnOpenClick
     end
     object btnSave: TButton
       Left = 608
-      Top = 11
+      Top = 8
       Width = 75
       Height = 25
       Anchors = [akRight, akBottom]
       Caption = #20445#23384#23383#24149
       TabOrder = 1
       OnClick = btnSaveClick
+    end
+    object btnHelp: TButton
+      Left = 16
+      Top = 8
+      Width = 97
+      Height = 25
+      Caption = #24110#21161'(Github)'
+      TabOrder = 2
+      OnClick = btnHelpClick
     end
   end
   object OpenDialog1: TOpenDialog

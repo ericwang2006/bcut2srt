@@ -10,16 +10,18 @@ type
   TFrmBcut2Strt = class(TForm)
     Memo1: TMemo;
     Panel1: TPanel;
-    Button1: TButton;
+    btnOpen: TButton;
     btnSave: TButton;
     OpenDialog1: TOpenDialog;
     SaveDialog1: TSaveDialog;
-    procedure Button1Click(Sender: TObject);
+    btnHelp: TButton;
+    procedure btnOpenClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure btnHelpClick(Sender: TObject);
   private
     procedure DropFiles(var Msg: TMessage); message WM_DropFILES;
-    procedure ToSrt(const AFileName: string);
+    procedure BcutToSrt(const AFileName: string);
   public
 
   end;
@@ -29,32 +31,15 @@ var
 
 implementation
 
-uses XMLIntf, XmlDoc, math;
+uses XMLIntf, XmlDoc;
 
 {$R *.dfm}
 
-function inPointToStr(inPoint: Integer): string;
-var
-  h, m, s, msec: Integer;
-begin
-  inPoint := Trunc(inPoint / 1000);
-  msec := Round((inPoint / 1000 - Trunc(inPoint / 1000)) * 1000);
-  inPoint := Trunc(inPoint / 1000);
-
-  h := Trunc(inPoint / 60 / 60);
-  inPoint := inPoint - 60 * 60 * h;
-
-  m := Trunc(inPoint / 60);
-  s := inPoint - 60 * m;
-
-  Result := Format('%.2d:%.2d:%.2d,%.3d', [h, m, s, msec]);
-end;
-
-procedure TFrmBcut2Strt.Button1Click(Sender: TObject);
+procedure TFrmBcut2Strt.btnOpenClick(Sender: TObject);
 begin
   if not OpenDialog1.Execute then
     Exit;
-  ToSrt(OpenDialog1.FileName);
+  BcutToSrt(OpenDialog1.FileName);
 end;
 
 procedure TFrmBcut2Strt.btnSaveClick(Sender: TObject);
@@ -74,6 +59,11 @@ begin
   end;
 end;
 
+procedure TFrmBcut2Strt.btnHelpClick(Sender: TObject);
+begin
+  ShellExecute(Application.Handle, 'open', 'https://github.com/ericwang2006/bcut2srt', nil, nil, SW_SHOW);
+end;
+
 procedure TFrmBcut2Strt.DropFiles(var Msg: TMessage);
 var
   i, Count: Integer;
@@ -86,7 +76,7 @@ begin
     buffer[0] := #0;
     DragQueryFile(Msg.WParam, i, buffer, sizeof(buffer)); // 第二次调用得到文件名称
     if SameText(ExtractFileExt(buffer), '.xml') then
-      ToSrt(buffer);
+      BcutToSrt(buffer);
   end;
 end;
 
@@ -100,55 +90,92 @@ begin
   DragAcceptFiles(Handle, True);
 end;
 
-procedure TFrmBcut2Strt.ToSrt(const AFileName: string);
+procedure _BcutToSrt(const AFileName: string; List: TStrings);
+
+  function inPointToStr(inPoint: Integer): string;
+  var
+    h, m, s, ms: Integer;
+  begin
+    inPoint := Trunc(inPoint / 1000);
+    ms := Round((inPoint / 1000 - Trunc(inPoint / 1000)) * 1000);
+    inPoint := Trunc(inPoint / 1000);
+
+    h := Trunc(inPoint / 60 / 60);
+    inPoint := inPoint - 60 * 60 * h;
+
+    m := Trunc(inPoint / 60);
+    s := inPoint - 60 * m;
+
+    Result := Format('%.2d:%.2d:%.2d,%.3d', [h, m, s, ms]);
+  end;
+
 var
   AXmlDoc: IXMLDocument;
   videoTrack, videoTracks, trackCaptions, caption: IXMLNode;
-  i, j, inPoint, duration: Integer;
+  NodeList: IXMLNodeList;
+  I, J, inPoint, duration: Integer;
   sText: string;
   bFound: Boolean;
 begin
   AXmlDoc := TXMLDocument.Create(nil);
-  Memo1.Lines.BeginUpdate;
-  Memo1.Clear;
+  List.BeginUpdate;
+  List.Clear;
+  try
+    AXmlDoc.LoadFromFile(AFileName);
+
+    videoTracks := AXmlDoc.DocumentElement.ChildNodes.FindNode('timeline');
+    if not Assigned(videoTracks) then
+      raise Exception.Create('not found timeline');
+
+    videoTracks := videoTracks.ChildNodes.FindNode('videoTracks');
+    if not Assigned(videoTracks) then
+      raise Exception.Create('not found videoTracks');
+
+    bFound := False;
+    for i := 0 to videoTracks.ChildNodes.Count - 1 do
+    begin
+      videoTrack := videoTracks.ChildNodes[i];
+      trackCaptions := videoTrack.ChildNodes.FindNode('trackCaptions');
+      if Assigned(trackCaptions) then
+      begin
+        bFound := True;
+        NodeList := trackCaptions.ChildNodes;
+        for j := 0 to NodeList.Count - 1 do
+        begin
+          caption := NodeList.Get(J);
+          sText := caption.Attributes['text'];
+          inPoint := caption.Attributes['inPoint'];
+          duration := caption.Attributes['duration'];
+
+          List.Add(IntToStr(j + 1));
+          List.Add(inPointToStr(inPoint) + ' --> ' + inPointToStr(inPoint + duration));
+          List.Add(sText);
+          List.Add('');
+        end;
+        Break;
+      end;
+    end;
+    if not bFound then
+      raise Exception.Create('not found subtitle');
+  finally
+    AXmlDoc := nil;
+    List.EndUpdate;
+  end;
+end;
+
+procedure TFrmBcut2Strt.BcutToSrt(const AFileName: string);
+begin
   Screen.Cursor := crHourGlass;
   Application.ProcessMessages;
   try
     try
-      AXmlDoc.LoadFromFile(AFileName);
-      videoTracks := AXmlDoc.DocumentElement.ChildNodes.FindNode('timeline').ChildNodes.FindNode('videoTracks');
-      bFound := False;
-      for i := 0 to videoTracks.ChildNodes.Count - 1 do
-      begin
-        videoTrack := videoTracks.ChildNodes[i];
-        trackCaptions := videoTrack.ChildNodes.FindNode('trackCaptions');
-        if trackCaptions <> nil then
-        begin
-          bFound := True;
-          for j := 0 to trackCaptions.ChildNodes.Count - 1 do
-          begin
-            caption := trackCaptions.ChildNodes[j];
-            sText := caption.Attributes['text'];
-            inPoint := caption.Attributes['inPoint'];
-            duration := caption.Attributes['duration'];
-
-            Memo1.Lines.Add(IntToStr(j + 1));
-            Memo1.Lines.Add(inPointToStr(inPoint) + ' --> ' + inPointToStr(inPoint + duration));
-            Memo1.Lines.Add(sText);
-            Memo1.Lines.Add('');
-          end;
-          Break;
-        end;
-      end;
-      if not bFound then
-        Application.MessageBox('我拿着望远镜也没找到字幕啊!', '提示', MB_OK + MB_ICONWARNING);
+      _BcutToSrt(AFileName, Memo1.Lines);
     except
       on E: Exception do
-        Application.MessageBox(PChar('好像出现了灾难性故障:' + sLineBreak + E.Message), '提示', MB_OK + MB_ICONWARNING);
+        Application.MessageBox(PChar(E.Message), '提示', MB_OK + MB_ICONWARNING);
     end;
+
   finally
-    AXmlDoc := nil;
-    Memo1.Lines.EndUpdate;
     Screen.Cursor := crDefault;
   end;
 end;
