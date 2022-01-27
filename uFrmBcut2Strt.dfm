@@ -84,6 +84,7 @@ object FrmBcut2Strt: TFrmBcut2Strt
   end
   object SaveDialog1: TSaveDialog
     DefaultExt = '.srt'
+    FileName = 'project.srt'
     Filter = '*.srt|*.srt'
     Options = [ofOverwritePrompt, ofHideReadOnly, ofEnableSizing]
     Left = 224

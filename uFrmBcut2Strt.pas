@@ -96,14 +96,16 @@ procedure _BcutToSrt(const AFileName: string; List: TStrings);
   var
     h, m, s, ms: Integer;
   begin
-    inPoint := Trunc(inPoint / 1000);
-    ms := Round((inPoint / 1000 - Trunc(inPoint / 1000)) * 1000);
-    inPoint := Trunc(inPoint / 1000);
+    inPoint := inPoint div 1000;
 
-    h := Trunc(inPoint / 60 / 60);
-    inPoint := inPoint - 60 * 60 * h;
+    ms := inPoint mod 1000;
+    inPoint := inPoint div 1000;
 
-    m := Trunc(inPoint / 60);
+    h := inPoint div 3600;
+    Dec(inPoint, 3600 * h);
+
+    m := inPoint div 60;
+
     s := inPoint - 60 * m;
 
     Result := Format('%.2d:%.2d:%.2d,%.3d', [h, m, s, ms]);
@@ -174,7 +176,6 @@ begin
       on E: Exception do
         Application.MessageBox(PChar(E.Message), 'ÌבÊ¾', MB_OK + MB_ICONWARNING);
     end;
-
   finally
     Screen.Cursor := crDefault;
   end;
