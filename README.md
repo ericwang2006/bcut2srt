@@ -15,3 +15,9 @@
 
 - 导出的srt字幕文件字符集编码是UTF-8
 - 发布的二进制文件是Delphi7编译，不包含任何病毒后门，如果有疑问可以自行编译，作者不对360安全卫士这类流氓软件的检测结果负责。
+
+## 视频教程
+
+- [YouTube](https://www.youtube.com/watch?v=mniYgtSRy_k)
+- [B站](https://www.bilibili.com/video/BV19b4y1776X/)
+- [西瓜视频](https://www.ixigua.com/7057811815547273759)
