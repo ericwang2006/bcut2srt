@@ -92,7 +92,7 @@ end;
 
 procedure _BcutToSrt(const AFileName: string; List: TStrings);
 
-  function inPointToStr(inPoint: Integer): string;
+  function inPointToStr(inPoint: Int64): string;
   var
     h, m, s, ms: Integer;
   begin
@@ -115,7 +115,8 @@ var
   AXmlDoc: IXMLDocument;
   videoTrack, videoTracks, trackCaptions, caption: IXMLNode;
   NodeList: IXMLNodeList;
-  I, J, inPoint, duration: Integer;
+  I, J: Integer;
+  inPoint, duration: Int64;
   sText: string;
   bFound: Boolean;
 begin
@@ -146,9 +147,8 @@ begin
         begin
           caption := NodeList.Get(J);
           sText := caption.Attributes['text'];
-          inPoint := caption.Attributes['inPoint'];
-          duration := caption.Attributes['duration'];
-
+          inPoint := StrToInt64(VarToStr(caption.Attributes['inPoint']));
+          duration := StrToInt64(VarToStr(caption.Attributes['duration']));
           List.Add(IntToStr(j + 1));
           List.Add(inPointToStr(inPoint) + ' --> ' + inPointToStr(inPoint + duration));
           List.Add(sText);
