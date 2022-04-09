@@ -5,7 +5,7 @@ object FrmBcut2Strt: TFrmBcut2Strt
   Height = 510
   Caption = #24517#21098#23383#24149#23548#20986#24037#20855
   Color = clBtnFace
-  Font.Charset = ANSI_CHARSET
+  Font.Charset = GB2312_CHARSET
   Font.Color = clWindowText
   Font.Height = -12
   Font.Name = #23435#20307
@@ -18,8 +18,8 @@ object FrmBcut2Strt: TFrmBcut2Strt
   object Memo1: TMemo
     Left = 0
     Top = 0
-    Width = 698
-    Height = 427
+    Width = 690
+    Height = 419
     Align = alClient
     BorderStyle = bsNone
     Font.Charset = GB2312_CHARSET
@@ -32,43 +32,39 @@ object FrmBcut2Strt: TFrmBcut2Strt
       'Drop file here')
     ParentFont = False
     ReadOnly = True
-    ScrollBars = ssBoth
+    ScrollBars = ssVertical
     TabOrder = 0
   end
   object Panel1: TPanel
     Left = 0
-    Top = 427
-    Width = 698
+    Top = 419
+    Width = 690
     Height = 52
     Align = alBottom
     BevelOuter = bvNone
+    Color = 16578017
     TabOrder = 1
-    DesignSize = (
-      698
-      52)
     object btnOpen: TButton
-      Left = 480
-      Top = 8
+      Left = 16
+      Top = 14
       Width = 115
       Height = 25
-      Anchors = [akRight, akBottom]
       Caption = #25171#24320#24517#21098#24037#31243#25991#20214
       TabOrder = 0
       OnClick = btnOpenClick
     end
     object btnSave: TButton
-      Left = 608
-      Top = 8
-      Width = 75
+      Left = 144
+      Top = 14
+      Width = 97
       Height = 25
-      Anchors = [akRight, akBottom]
       Caption = #20445#23384#23383#24149
       TabOrder = 1
       OnClick = btnSaveClick
     end
     object btnHelp: TButton
-      Left = 16
-      Top = 8
+      Left = 256
+      Top = 14
       Width = 97
       Height = 25
       Caption = #24110#21161'(Github)'
